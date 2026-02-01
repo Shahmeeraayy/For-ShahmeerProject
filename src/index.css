@@ -11,7 +11,7 @@
   --animate-shrink: shrink 1s ease-out forwards;
   --animate-gentlePulse: gentlePulse 2s ease-in-out infinite;
   --animate-roseFall: roseFall 8s ease-in infinite;
-  --font-sans: 'Pacifico', 'Poppins', cursive;
+  --font-sans: 'Poppins', 'Nunito', sans-serif;
 }
 
 @keyframes shake {

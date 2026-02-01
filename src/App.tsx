@@ -94,8 +94,14 @@ const FlowerBouquet = () => (
 // Ultra dense flower field for all screens
 const UltraFlowerField = () => {
   // Create a grid of flowers covering the entire screen
+  const isSmallScreen = typeof window !== 'undefined' && window.innerWidth < 640;
+  const gridSize = isSmallScreen ? 16 : 25; // fewer flowers on small screens for clarity
+  const petalCount = isSmallScreen ? 60 : 150;
+  const baseOpacity = isSmallScreen ? 0.18 : 0.3;
+  const opacityRange = isSmallScreen ? 0.35 : 0.5;
+  const sizeMin = isSmallScreen ? 14 : 18;
+  const sizeRange = isSmallScreen ? 22 : 30;
   const flowers = [];
-  const gridSize = 25; // 25x25 grid = 625 flowers (ULTRA DENSE)
   const cellWidth = 100 / gridSize;
   const cellHeight = 100 / gridSize;
   
@@ -103,8 +109,8 @@ const UltraFlowerField = () => {
     for (let col = 0; col < gridSize; col++) {
       const x = col * cellWidth + Math.random() * cellWidth;
       const y = row * cellHeight + Math.random() * cellHeight;
-      const size = 18 + Math.random() * 30;
-      const opacity = 0.3 + Math.random() * 0.5;
+      const size = sizeMin + Math.random() * sizeRange;
+      const opacity = baseOpacity + Math.random() * opacityRange;
       const rotation = Math.random() * 360;
       const delay = Math.random() * 2;
       const duration = 3 + Math.random() * 5;
@@ -147,7 +153,7 @@ const UltraFlowerField = () => {
     <>
       {flowers}
       {/* Beautiful falling rose petals - ULTRA DENSE */}
-      {[...Array(150)].map((_, i) => (
+      {[...Array(petalCount)].map((_, i) => (
         <RosePetal key={`petal-${i}`} delay={i * 0.05} left={`${Math.random() * 100}%`} size={12 + Math.random() * 18} />
       ))}
     </>
@@ -156,19 +162,23 @@ const UltraFlowerField = () => {
 
 // Common screen wrapper for consistent styling
 const ScreenWrapper = ({ children }: { children: React.ReactNode }) => (
-  <div className="min-h-screen flex flex-col items-center justify-center p-6 relative overflow-hidden">
+  <div className="min-h-screen flex flex-col items-center justify-center px-5 pt-8 pb-16 sm:p-6 relative overflow-hidden">
     <UltraFlowerField />
-    <div className="text-center space-y-8 z-10 max-w-lg relative">
+    <div className="absolute inset-0 bg-white/60 sm:bg-white/45 z-0 pointer-events-none"></div>
+    <div className="text-center space-y-8 z-10 max-w-lg w-full relative">
       {children}
     </div>
   </div>
 );
 
+const primaryButtonBase =
+  "bg-rose-500 bg-gradient-to-r from-rose-500 via-pink-500 to-fuchsia-500 text-white rounded-full font-semibold shadow-2xl shadow-rose-300/60 ring-2 ring-white/80 border border-rose-200/70 hover:shadow-rose-400/70 hover:brightness-105 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-rose-200/70 transform hover:scale-105 active:scale-95 transition-all duration-300 relative z-20 font-sans tracking-wide";
+
 // Common button style
 const ContinueButton = ({ onClick, children }: { onClick: () => void, children: React.ReactNode }) => (
   <button
     onClick={onClick}
-    className="mt-8 px-10 py-5 bg-gradient-to-r from-pink-400 to-rose-400 text-white rounded-full text-xl font-semibold shadow-2xl shadow-pink-200 hover:shadow-pink-300 ring-1 ring-pink-200/70 transform hover:scale-105 active:scale-95 hover:brightness-105 transition-all duration-300 relative z-20 font-sans tracking-wide"
+    className={`mt-8 px-10 py-5 text-xl ${primaryButtonBase}`}
   >
     {children}
   </button>
@@ -181,7 +191,7 @@ const Screen1 = ({ onContinue }: { onContinue: () => void }) => (
         <AnimatedFlower size={45} color="text-pink-400 animate-pulse" />
         <AnimatedFlower size={40} color="text-rose-400 animate-bounce" />
       </div>
-      <p className="text-3xl md:text-4xl text-pink-800 leading-relaxed font-medium bg-white/85 backdrop-blur-md rounded-3xl p-8 shadow-xl ring-1 ring-pink-100/70 font-sans tracking-wide">
+      <p className="text-3xl md:text-4xl text-pink-800 leading-relaxed font-medium bg-white/95 backdrop-blur-md rounded-3xl p-8 shadow-xl ring-1 ring-pink-100/70 font-sans tracking-wide">
         Hey Riqza, I hope you're doing well. You might be wondering what this crazy guy is up to now.
       </p>
     </div>
@@ -196,7 +206,7 @@ const Screen2 = ({ onContinue }: { onContinue: () => void }) => (
         <AnimatedFlower size={50} color="text-pink-300 animate-pulse" />
         <AnimatedFlower size={45} color="text-rose-300 animate-bounce" />
       </div>
-      <p className="text-xl md:text-2xl text-pink-800 leading-relaxed font-medium bg-white/85 backdrop-blur-md rounded-3xl p-8 shadow-xl ring-1 ring-pink-100/70 font-sans tracking-wide">
+      <p className="text-xl md:text-2xl text-pink-800 leading-relaxed font-medium bg-white/95 backdrop-blur-md rounded-3xl p-8 shadow-xl ring-1 ring-pink-100/70 font-sans tracking-wide">
         I wanted to properly apologize to you. I know I can be a bit of a drama queen or a little fried, but trust me, I'm usually just hungry. Still, I feel like none of that should ever make you question yourself or overthink everything you do, and I'm really sorry about that.
       </p>
     </div>
@@ -207,11 +217,11 @@ const Screen2 = ({ onContinue }: { onContinue: () => void }) => (
 const Screen3 = ({ onContinue }: { onContinue: () => void }) => (
   <ScreenWrapper>
     <div className="space-y-6">
-      <h2 className="text-3xl md:text-4xl text-pink-800 bg-white/85 backdrop-blur-md rounded-3xl p-8 shadow-xl ring-1 ring-pink-100/70 font-display">
+      <h2 className="text-3xl md:text-4xl text-pink-800 bg-white/95 backdrop-blur-md rounded-3xl p-8 shadow-xl ring-1 ring-pink-100/70 font-display">
         Reasons why you should forgive me:
       </h2>
       
-      <div className="space-y-4 text-left bg-white/90 backdrop-blur-md rounded-3xl p-8 shadow-xl ring-1 ring-pink-100/70">
+      <div className="space-y-4 text-left bg-white/95 backdrop-blur-md rounded-3xl p-8 shadow-xl ring-1 ring-pink-100/70">
         {[
           "I'm Batman",
           "I'm writing a research paper on curing period cramps",
@@ -260,7 +270,7 @@ const Screen4 = ({ onContinue }: { onContinue: () => void }) => (
           className="w-full rounded-3xl shadow-xl border-2 border-pink-200/70"
         />
       </div>
-      <p className="text-xl md:text-2xl text-pink-800 leading-relaxed font-medium bg-white/90 backdrop-blur-md rounded-3xl p-8 shadow-xl ring-1 ring-pink-100/70 font-sans tracking-wide">
+      <p className="text-xl md:text-2xl text-pink-800 leading-relaxed font-medium bg-white/95 backdrop-blur-md rounded-3xl p-8 shadow-xl ring-1 ring-pink-100/70 font-sans tracking-wide">
         I hope you can forgive me. I got you some flowers (digitally). I hope you like them.
       </p>
     </div>
@@ -275,7 +285,7 @@ const Screen5 = ({ onContinue }: { onContinue: () => void }) => (
         <AnimatedFlower size={50} color="text-pink-400 animate-pulse" />
         <AnimatedFlower size={45} color="text-rose-400" />
       </div>
-      <p className="text-xl md:text-2xl text-pink-800 leading-relaxed font-medium bg-white/85 backdrop-blur-md rounded-3xl p-8 shadow-xl ring-1 ring-pink-100/70 font-sans tracking-wide">
+      <p className="text-xl md:text-2xl text-pink-800 leading-relaxed font-medium bg-white/95 backdrop-blur-md rounded-3xl p-8 shadow-xl ring-1 ring-pink-100/70 font-sans tracking-wide">
         I won't ever make you feel like this again. I always want to see you happy, and I hope you can forgive me this time.
       </p>
     </div>
@@ -335,16 +345,17 @@ const Screen6 = ({
   const getNoButtonOpacity = () => Math.max(0.35, 1 - noClickCount * 0.18);
 
   return (
-    <div className="min-h-screen flex flex-col items-center justify-center p-6 relative overflow-hidden">
+    <div className="min-h-screen flex flex-col items-center justify-center px-5 pt-8 pb-16 sm:p-6 relative overflow-hidden">
       <UltraFlowerField />
+      <div className="absolute inset-0 bg-white/60 sm:bg-white/45 z-0 pointer-events-none"></div>
 
-      <div className="text-center space-y-8 z-10 max-w-lg relative">
+      <div className="text-center space-y-8 z-10 max-w-lg w-full relative">
         <div className="space-y-4">
           <div className="flex justify-center gap-4 mb-4">
             <AnimatedFlower size={70} color="text-pink-400 animate-pulse" />
             <AnimatedFlower size={65} color="text-rose-400 animate-bounce" />
           </div>
-          <p className="text-3xl md:text-4xl text-pink-800 bg-white/85 backdrop-blur-md rounded-3xl p-8 shadow-xl ring-1 ring-pink-100/70 font-display">
+          <p className="text-3xl md:text-4xl text-pink-800 bg-white/95 backdrop-blur-md rounded-3xl p-8 shadow-xl ring-1 ring-pink-100/70 font-display">
             Did you forgive Shahmeer?
           </p>
         </div>
@@ -443,7 +454,7 @@ const Screen6 = ({
           {showHelperText && (
             <div className="absolute -bottom-24 left-1/2 transform -translate-x-1/2 z-20">
               <div className="relative">
-                <p className="text-pink-600 text-base md:text-lg font-semibold animate-bounce whitespace-nowrap drop-shadow-lg bg-white/90 px-5 py-2 rounded-full border-2 border-pink-300 shadow-xl">
+                <p className="text-pink-600 text-base md:text-lg font-semibold animate-bounce whitespace-nowrap drop-shadow-lg bg-white/95 px-5 py-2 rounded-full border-2 border-pink-300 shadow-xl">
                   {getHelperMessage()}
                 </p>
                 <div className="absolute -top-3 -left-3 -right-3 -bottom-3 bg-gradient-to-r from-pink-300/50 to-rose-300/50 blur-xl rounded-full"></div>
@@ -522,7 +533,7 @@ const Screen7 = ({
             <AnimatedFlower size={60} color="text-pink-400 animate-pulse" />
             <AnimatedFlower size={55} color="text-rose-400 animate-bounce" />
           </div>
-          <p className="text-3xl md:text-4xl text-pink-800 leading-relaxed bg-white/85 backdrop-blur-md rounded-3xl p-8 shadow-xl ring-1 ring-pink-100/70 font-display">
+          <p className="text-3xl md:text-4xl text-pink-800 leading-relaxed bg-white/95 backdrop-blur-md rounded-3xl p-8 shadow-xl ring-1 ring-pink-100/70 font-display">
             You're the best shawrty ever.
           </p>
         </div>
@@ -538,13 +549,13 @@ const Screen7 = ({
         </div>
         
         <div className="space-y-6 mt-8">
-          <label className="block text-xl text-pink-700 font-medium bg-white/90 backdrop-blur-md rounded-3xl p-6 shadow-xl ring-1 ring-pink-100/70 font-sans tracking-wide">
+          <label className="block text-xl text-pink-700 font-medium bg-white/95 backdrop-blur-md rounded-3xl p-6 shadow-xl ring-1 ring-pink-100/70 font-sans tracking-wide">
             Leave a note for shahmeer.
           </label>
           <textarea
             value={message}
             onChange={(e) => setMessage(e.target.value)}
-            className="w-full h-40 p-5 bg-white/90 backdrop-blur-sm rounded-3xl border-[3px] border-pink-200 text-pink-800 text-xl placeholder-pink-300 focus:outline-none focus:border-pink-400 focus:ring-4 focus:ring-pink-100 resize-none relative z-10 font-sans tracking-wide leading-relaxed"
+            className="w-full h-40 p-5 bg-white/95 backdrop-blur-sm rounded-3xl border-[3px] border-pink-200 text-pink-800 text-xl placeholder-pink-300 focus:outline-none focus:border-pink-400 focus:ring-4 focus:ring-pink-100 resize-none relative z-10 font-sans tracking-wide leading-relaxed"
             placeholder="Type your message here..."
           />
         </div>
@@ -552,7 +563,7 @@ const Screen7 = ({
         <button
           onClick={() => onSend(message)}
           disabled={!message.trim() || isSending}
-          className="w-full px-8 py-5 bg-gradient-to-r from-pink-400 to-rose-400 text-white rounded-full text-xl font-semibold shadow-2xl shadow-pink-200 hover:shadow-pink-300 transform hover:scale-105 transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none relative z-20 font-sans tracking-wide"
+          className={`w-full px-8 py-5 text-xl ${primaryButtonBase} disabled:opacity-60 disabled:cursor-not-allowed disabled:transform-none`}
         >
           {isSending ? 'Sending...' : 'Send'}
         </button>
@@ -569,7 +580,7 @@ const SuccessScreen = ({ onGoHome }: { onGoHome: () => void }) => (
           <AnimatedFlower size={70} color="text-pink-400 animate-bounce" />
           <AnimatedFlower size={65} color="text-rose-400 animate-pulse" />
         </div>
-        <p className="text-2xl md:text-3xl text-pink-600 bg-white/85 backdrop-blur-md rounded-3xl p-8 shadow-xl ring-1 ring-pink-100/70 font-sans tracking-wide">
+        <p className="text-2xl md:text-3xl text-pink-600 bg-white/95 backdrop-blur-md rounded-3xl p-8 shadow-xl ring-1 ring-pink-100/70 font-sans tracking-wide">
           Your message has been sent!
         </p>
       </div>
@@ -586,7 +597,7 @@ const SuccessScreen = ({ onGoHome }: { onGoHome: () => void }) => (
       
       <button
         onClick={onGoHome}
-        className="mt-8 px-10 py-5 bg-gradient-to-r from-pink-400 to-rose-400 text-white rounded-full text-xl font-semibold shadow-2xl shadow-pink-200 hover:shadow-pink-300 transform hover:scale-105 transition-all duration-300 relative z-20 font-sans tracking-wide"
+        className={`mt-8 px-10 py-5 text-xl ${primaryButtonBase}`}
       >
         Go Back Home
       </button>
